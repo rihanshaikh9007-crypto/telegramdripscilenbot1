@@ -1,59 +1,62 @@
 import random
-import string
 import asyncio
-import threading
-from http.server import BaseHTTPRequestHandler, HTTPServer
-
+import time
 from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, ContextTypes
 
-BOT_TOKEN = "8479108013:AAEnntKsp2VHgke7_PvNx7oB-6V6WMjAlkQ"
+BOT_TOKEN = "YOUR_BOT_TOKEN_HERE"
 
 channels = [
     {"name": "Channel 1", "id": -1003779626687, "link": "https://t.me/+9kE0KnkLKMNkMDhl"},
-    {"name": "Channel 2", "id": -1003784798023, "link": "https://t.me/+N3-w5dHnc7U1MDI1"}
+    {"name": "Channel 2", "id": -1003784798023, "link": "https://t.me/+N3-w5dHnc7U1MDI1"},
+    {"name": "Channel 3", "id": -1002785963969, "link": "https://t.me/+01WJ0dy3rKI1NzFl"},
+    {"name": "Channel 4", "id": -1002974901382, "link": "https://t.me/+jm2ZY3HZYYA5ODk1"},
+    {"name": "Channel 5", "id": -1002768798055, "link": "https://t.me/+L0gRJO18rEQ4MmJl"},
+    {"name": "Channel 6", "id": -1003293078621, "link": "https://t.me/+y5nC2bNQfrUyNWVl"},
+    {"name": "Channel 7", "id": -1003220631921, "link": "https://t.me/+AkhiQEjHiwo3NGRl"},
+    {"name": "Channel 8", "id": -1003569342555, "link": "https://t.me/+5B4wsdDjD_czZjQ1"},
 ]
 
 IMAGE_URL = "https://files.catbox.moe/wcfmqd.jpg"
 
-# 🔥 Fake Web Server (PORT FIX)
-class Handler(BaseHTTPRequestHandler):
-    def do_GET(self):
-        self.send_response(200)
-        self.end_headers()
-        self.wfile.write(b"Bot is running!")
+# 🔥 DATABASE (RAM)
+user_keys = {}
 
-def run_web():
-    import os
-    port = int(os.environ.get("PORT", 10000))
-    server = HTTPServer(("0.0.0.0", port), Handler)
-    server.serve_forever()
-
-# 🔑 Key Generator
+# 🔑 KEY GENERATOR
 def generate_key():
-    return "DARK-" + ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
+    return str(random.randint(1000000000, 9999999999))
 
-# 🚀 Start Command
+# 🚀 START
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    keyboard = [
-        [InlineKeyboardButton("🔥 Join Channel 1", url=channels[0]["link"])],
-        [InlineKeyboardButton("🔥 Join Channel 2", url=channels[1]["link"])],
-        [InlineKeyboardButton("✅ VERIFY", callback_data="verify")]
-    ]
+    keyboard = []
+    for ch in channels:
+        keyboard.append([InlineKeyboardButton(f"Join {ch['name']} 🔥", url=ch["link"])])
+    keyboard.append([InlineKeyboardButton("✅ VERIFY", callback_data="verify")])
 
     await update.message.reply_photo(
         photo=IMAGE_URL,
-        caption="👻 Sab channels join karo phir VERIFY dabao",
+        caption="""
+𝗛𝗲𝗹𝗹𝗼 𝗨𝘀𝗲𝗿 👻 𝐁𝐎𝐓
+
+𝗔𝗟𝗟 𝗖𝗛𝗔𝗡𝗡𝗘𝗟 𝗝𝗢𝗜𝗡 🥰
+
+👻 Sab channels join karo phir VERIFY dabao
+
+𝐇𝐎𝐖 𝐓𝐎 𝐆𝐄𝐍𝐄𝐑𝐀𝐓𝐄 𝐊𝐄𝐘 💀
+<a href="https://t.me/setupchanel_0/60">𝐂𝐋𝐈𝐂𝐊 𝐇𝐄𝐑𝐄</a>
+""",
+        parse_mode="HTML",
         reply_markup=InlineKeyboardMarkup(keyboard)
     )
 
-# ✅ Verify सिस्टम (FAST + NO ERROR)
+# ⚡ VERIFY
 async def verify_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
 
     user_id = query.from_user.id
 
+    # 🔍 JOIN CHECK
     async def check(ch):
         try:
             member = await context.bot.get_chat_member(ch["id"], user_id)
@@ -67,26 +70,56 @@ async def verify_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     not_joined = [r for r in results if r]
 
     if not_joined:
-        await query.message.reply_text(f"❌ Join first: {', '.join(not_joined)}")
+        await query.message.reply_text(
+            f"❌ Pehle join karo:\n{', '.join(not_joined)}"
+        )
         return
 
+    # 🔐 CHECK EXISTING KEY
+    current_time = time.time()
+
+    if user_id in user_keys:
+        key_data = user_keys[user_id]
+        # 24 hours = 86400 sec
+        if current_time - key_data["time"] < 86400:
+            await query.message.reply_text(
+                f"""
+⚠️ Tumhari key already bani hai
+
+🔑 Key - {key_data["key"]}
+
+⏳ Valid for 24 hours
+"""
+            )
+            return
+
+    # 🔑 NEW KEY
     key = generate_key()
 
+    user_keys[user_id] = {
+        "key": key,
+        "time": current_time
+    }
+
     await query.message.reply_text(
-        f"✅ VERIFIED!\n\n🔑 KEY:\n`{key}`",
-        parse_mode="Markdown"
+        f"""
+🔑 Key - {key}
+
+📥 DRIP SCINET APK:
+https://www.mediafire.com/file/if3uvvwjbj87lo2/DRIPCLIENT_v6.2_GLOBAL_AP.apks/file
+
+⚠️ APK open karne ke baad ye join karo:
+https://t.me/+MkNcxGuk-w43MzBl
+
+⏳ Key valid: 24 hours
+"""
     )
 
-# 🤖 BOT START
-def run_bot():
-    app = ApplicationBuilder().token(BOT_TOKEN).build()
-    app.add_handler(CommandHandler("start", start))
-    app.add_handler(CallbackQueryHandler(verify_callback, pattern="verify"))
+# 🚀 RUN
+app = ApplicationBuilder().token(BOT_TOKEN).build()
 
-    print("Bot Running...")
-    app.run_polling(drop_pending_updates=True)
+app.add_handler(CommandHandler("start", start))
+app.add_handler(CallbackQueryHandler(verify_callback, pattern="verify"))
 
-# 🔥 RUN BOTH (WEB + BOT)
-if __name__ == "__main__":
-    threading.Thread(target=run_web).start()
-    run_bot()
+print("PRO Bot Running...")
+app.run_polling(drop_pending_updates=True)
