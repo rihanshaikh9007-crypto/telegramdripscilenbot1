@@ -4,7 +4,7 @@ import time
 from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, ContextTypes
 
-BOT_TOKEN = "YOUR_BOT_TOKEN_HERE"
+BOT_TOKEN = "8479108013:AAEnntKsp2VHgke7_PvNx7oB-6V6WMjAlkQ"
 
 channels = [
     {"name": "Channel 1", "id": -1003779626687, "link": "https://t.me/+9kE0KnkLKMNkMDhl"},
